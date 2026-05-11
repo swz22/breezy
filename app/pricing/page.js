@@ -5,6 +5,7 @@ import PricingQuiz from "@/components/PricingQuiz";
 
 export default function PricingPage() {
   const [toast, setToast] = useState("");
+  const [recommendedPlan, setRecommendedPlan] = useState(null);
 
   function showToast(msg) {
     setToast(msg);
@@ -110,53 +111,65 @@ export default function PricingPage() {
             All plans include unlimited access to Earth&apos;s atmosphere (terms apply).
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {plans.map((plan) => (
-              <div
-                key={plan.name}
-                className={`relative border rounded-2xl p-9 text-left hover:-translate-y-1 transition-all ${
-                  plan.popular
-                    ? "border-sky-400 shadow-xl shadow-sky-500/10 ring-1 ring-sky-400"
-                    : "border-slate-200"
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-sky-500 to-violet-500 text-white text-xs font-bold uppercase tracking-widest px-4 py-1 rounded-full">
-                    Most Popular
-                  </div>
-                )}
-                <h3 className="font-serif font-bold text-2xl mb-1">{plan.name}</h3>
-                <p className="text-slate-500 text-sm mb-5">{plan.desc}</p>
-                <div className="font-serif font-black text-5xl mb-6">
-                  <sup className="text-xl align-super">$</sup>
-                  {plan.price}
-                  <sub className="text-base font-sans font-normal text-slate-500">/mo</sub>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((f) => (
-                    <li key={f} className="flex items-center gap-3 text-sm text-slate-600">
-                      <span className="text-emerald-500 font-bold">✓</span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  onClick={plan.onClick}
-                  className={`w-full py-3.5 rounded-full font-semibold text-sm transition-all ${
-                    plan.popular
-                      ? "bg-sky-500 hover:bg-sky-600 text-white shadow-lg shadow-sky-500/30"
-                      : "bg-white border border-slate-200 text-slate-700 hover:border-sky-300 hover:bg-sky-50"
+            {plans.map((plan) => {
+              const isRecommended = recommendedPlan === plan.name;
+              return (
+                <div
+                  key={plan.name}
+                  className={`relative border rounded-2xl p-9 text-left hover:-translate-y-1 transition-all duration-300 ${
+                    isRecommended
+                      ? "border-emerald-400 shadow-xl shadow-emerald-500/20 ring-2 ring-emerald-400 scale-105"
+                      : plan.popular
+                        ? "border-sky-400 shadow-xl shadow-sky-500/10 ring-1 ring-sky-400"
+                        : "border-slate-200"
                   }`}
                 >
-                  {plan.cta}
-                </button>
-              </div>
-            ))}
+                  {isRecommended && (
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-400 to-emerald-600 text-white text-xs font-bold uppercase tracking-widest px-4 py-1 rounded-full whitespace-nowrap">
+                      ✨ Recommended for You
+                    </div>
+                  )}
+                  {!isRecommended && plan.popular && (
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-sky-500 to-violet-500 text-white text-xs font-bold uppercase tracking-widest px-4 py-1 rounded-full">
+                      Most Popular
+                    </div>
+                  )}
+                  <h3 className="font-serif font-bold text-2xl mb-1">{plan.name}</h3>
+                  <p className="text-slate-500 text-sm mb-5">{plan.desc}</p>
+                  <div className="font-serif font-black text-5xl mb-6">
+                    <sup className="text-xl align-super">$</sup>
+                    {plan.price}
+                    <sub className="text-base font-sans font-normal text-slate-500">/mo</sub>
+                  </div>
+                  <ul className="space-y-3 mb-8">
+                    {plan.features.map((f) => (
+                      <li key={f} className="flex items-center gap-3 text-sm text-slate-600">
+                        <span className="text-emerald-500 font-bold">✓</span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <button
+                    onClick={plan.onClick}
+                    className={`w-full py-3.5 rounded-full font-semibold text-sm transition-all ${
+                      isRecommended
+                        ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/30"
+                        : plan.popular
+                          ? "bg-sky-500 hover:bg-sky-600 text-white shadow-lg shadow-sky-500/30"
+                          : "bg-white border border-slate-200 text-slate-700 hover:border-sky-300 hover:bg-sky-50"
+                    }`}
+                  >
+                    {plan.cta}
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* AI QUIZ */}
-      <PricingQuiz />
+      <PricingQuiz onRecommend={setRecommendedPlan} />
 
       {/* STATS */}
       <section

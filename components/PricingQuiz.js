@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 
 const questions = [
   {
@@ -36,19 +35,13 @@ const questions = [
   },
 ];
 
-const planLinks = {
-  "Casual Breather": "/pricing#pricing",
-  "Power Inhaler": "/pricing#pricing",
-  "Enterprise Lung": "/pricing#pricing",
-};
-
 const planColors = {
   "Casual Breather": "from-sky-400 to-sky-600",
   "Power Inhaler": "from-sky-500 to-violet-500",
   "Enterprise Lung": "from-violet-500 to-violet-700",
 };
 
-export default function PricingQuiz() {
+export default function PricingQuiz({ onRecommend }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(false);
@@ -58,7 +51,6 @@ export default function PricingQuiz() {
   function handleAnswer(key, value) {
     const updated = { ...answers, [key]: value };
     setAnswers(updated);
-
     if (step < questions.length - 1) {
       setStep(step + 1);
     } else {
@@ -80,6 +72,7 @@ export default function PricingQuiz() {
         setError(data.error);
       } else {
         setResult(data);
+        if (onRecommend) onRecommend(data.plan);
       }
     } catch {
       setError("Something went wrong. Please try again.");
@@ -94,6 +87,7 @@ export default function PricingQuiz() {
     setResult(null);
     setError("");
     setLoading(false);
+    if (onRecommend) onRecommend(null);
   }
 
   const current = questions[step];
@@ -111,7 +105,7 @@ export default function PricingQuiz() {
         </p>
 
         <div className="bg-white rounded-2xl shadow-lg p-10">
-          {/* Quiz */}
+          {/* Quiz steps */}
           {!loading && !result && !error && (
             <>
               <div className="flex justify-center gap-2 mb-8">
